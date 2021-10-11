@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "178337653734",
+    "project_id": "rental-kendaraan-fbf26",
+    "storage_bucket": "rental-kendaraan-fbf26.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:178337653734:android:aee67f6e2ea4301f07ac27",
+        "android_client_info": {
+          "package_name": "transmettal.dev.rental"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "178337653734-414iert853468fogvpa8fgvc9kc9bo2u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "transmettal.dev.rental",
+            "certificate_hash": "2d787f02c3885fe42f97eaf9a73f3844874e9c73"
+          }
+        },
+        {
+          "client_id": "178337653734-efmv22la2hqg9ged7raagft1k5c4n40o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMmZGpaUo-oj1Zj9xE4UA8aJwYjfnkdLY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "178337653734-efmv22la2hqg9ged7raagft1k5c4n40o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

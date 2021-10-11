@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".RegisterActivity">
+
+    <LinearLayout
+        android:id="@+id/layout_progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginHorizontal="60dp"
+        android:padding="20dp"
+        android:background="@drawable/bkg_alert_dialog"
+        android:translationZ="90dp"
+        android:visibility="gone"
+        android:orientation="vertical">
+        <ProgressBar
+            android:id="@+id/progressbar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:progress="70" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Mengirim Foto Profile"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+        <RelativeLayout
+            android:id="@+id/register_image_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_image"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:src="@drawable/ic_account"
+                android:layout_marginBottom="30dp"
+                app:civ_border_width="2dp"
+                app:civ_border_color="@color/purple_700"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_regis"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:counterTextColor="@color/purple_700"
+                android:layout_marginHorizontal="20dp"
+                android:textColorHint="@color/black"
+                app:startIconDrawable="@drawable/ic_account"
+                android:hint="Nama Lengkap">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edt_fullname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:background="@drawable/bkg_edt_text"
+                    android:textColor="@color/purple_700"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:counterTextColor="@color/purple_700"
+                android:layout_marginHorizontal="20dp"
+                android:textColorHint="@color/black"
+                android:layout_marginVertical="15dp"
+                app:startIconDrawable="@drawable/ic_phone"
+                android:hint="No.Telp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edt_numtelp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:background="@drawable/bkg_edt_text"
+                    android:textColor="@color/purple_700"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+        </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:counterTextColor="@color/purple_700"
+            android:layout_marginHorizontal="20dp"
+            android:textColorHint="@color/black"
+            app:startIconDrawable="@drawable/ic_email"
+            android:hint="Email">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edt_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:background="@drawable/bkg_edt_text"
+                android:textColor="@color/purple_700"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:counterTextColor="@color/purple_700"
+            android:layout_marginHorizontal="20dp"
+            app:boxBackgroundMode="filled"
+            android:textColorHint="@color/black"
+            app:startIconDrawable="@drawable/ic_lock"
+            android:hint="Password">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edt_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bkg_edt_text"
+                android:textColor="@color/purple_700"
+                android:layout_marginVertical="15dp"
+                android:inputType="textPassword"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/btn_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:text="Register"
+            android:layout_marginVertical="10dp"/>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Rental</string>
+    <string name="login">Silahkan Login</string>
+    <string name="register">Silahkan Daftar</string>
+    <string name="tersewa_desc">TERSEWA HINGGA</string>
+    <string name="tersedia_desc">TERSEDIA</string>
+    <string name="hari">Hari</string>
+    <string name="desc_mitra">No. Referensi Mitra</string>
+    <string name="checkout">Checkout</string>
+    <string name="merek_model">Merek - Model</string>
+    <string name="tarif_sewa">Tarif Sewa</string>
+    <string name="lama_hari">Lama Sewa</string>
+    <string name="mulai_sewa">Mulai Sewa</string>
+</resources>

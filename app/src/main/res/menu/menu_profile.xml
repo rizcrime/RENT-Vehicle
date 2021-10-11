@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/register_broker"
+        android:title="Daftar Mitra"/>
+    <item
+        android:id="@+id/register_admin"
+        android:title="Daftar Admin"/>
+    <item
+        android:id="@+id/delete_account"
+        android:title="Hapus Akun"
+        android:icon="@drawable/ic_delete"
+        app:showAsAction="ifRoom"/>
+</menu>
