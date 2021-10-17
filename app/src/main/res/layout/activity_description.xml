@@ -34,14 +34,14 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <com.google.android.material.textfield.TextInputEditText
+                <EditText
                     android:id="@+id/nama_mobil"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/merek_model"
                     android:background="@color/white"
-                    android:layout_marginVertical="3dp"
-                    android:focusableInTouchMode="false"/>
+                    android:focusableInTouchMode="false"
+                    android:layout_marginVertical="3dp"/>
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -63,7 +63,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="3dp"
-                    android:hint="Status"
+                    android:hint="Tanggal Tersedia"
                     android:background="@color/white"
                     android:focusableInTouchMode="false" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -77,10 +77,12 @@
                     android:focusableInTouchMode="false"
                     android:layout_marginVertical="3dp"
                     android:background="@color/white"
+                    android:inputType="number"
                     android:hint="@string/tarif_sewa"
                     android:textColor="@color/black"/>
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/parent_tglMulai"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
@@ -94,6 +96,7 @@
                     android:focusable="false"/>
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/parent_jml_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText

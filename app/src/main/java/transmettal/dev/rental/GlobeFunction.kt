@@ -11,17 +11,15 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.view.animation.CycleInterpolator
 import android.view.animation.TranslateAnimation
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -45,15 +43,39 @@ open class GlobeFunction(var context: Context) {
         return FirebaseFirestore.getInstance()
     }
 
-    open fun regData(id: String, fullname: String, numTelp: String, status: String = "penyewa",poin: String = "0",
-                     special_kode: String = "0", keyAdmin: String = "0", referenceBy: String = "0"):Map<String, String>{
-        return hashMapOf("id" to id, "fullname" to fullname, "num_telp" to numTelp, "status" to status, "poin" to poin,
-            "special_kode" to special_kode, "key_admin" to keyAdmin, "reference_by" to referenceBy)
+    open fun regData(id: String, fullname: String, numTelp: String):Map<String, Any>{
+        return hashMapOf("id" to id, "fullname" to fullname, "num_telp" to numTelp,
+                         "status" to "penyewa", "poin" to "none", "special_kode" to "none",
+                         "key_admin" to "none", "reference_by" to "none",
+                         "riwayat_poin" to arrayListOf(mapOf("id" to "none",
+                                                             "jumlah" to "none",
+                                                             "status" to "none",
+                                                             "waktu" to Timestamp.now()))
+        )
     }
 
     open fun rupiah(nilai:Int):String{
-        val decim = DecimalFormat("#,###.##")
-        return "Rp${decim.format(nilai)}"
+        val localeID = Locale("in", "ID")
+        val formatRupiah = NumberFormat.getCurrencyInstance(localeID)
+        return formatRupiah.format(nilai)
+    }
+
+    open fun fbCalendar(datetoSaved: String): Date? {
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
+        return format.parse(datetoSaved)
+    }
+
+    open fun convTimestamp(date: Timestamp): String{
+        val millisecondsEnd = date.seconds * 1000 + date.nanoseconds / 1000000
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        val netDateEnd = Date(millisecondsEnd)
+        return sdf.format(netDateEnd)
+    }
+
+    open fun revertRupiah(nilai:String):String{
+        val hasil = nilai.replace("Rp","").replace(",00","")
+            .replace(".","")
+        return hasil
     }
 
     open fun getRandomString(length: Int) : String {

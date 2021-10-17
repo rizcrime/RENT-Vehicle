@@ -2,17 +2,21 @@ package transmettal.dev.rental
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.Timestamp
 
 class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        Log.d("hayam", Timestamp.now().toString())
 
         val email: EditText = findViewById(R.id.edt_email)
         val password: EditText = findViewById(R.id.edt_password)
@@ -41,8 +45,8 @@ class LoginActivity : AppCompatActivity() {
         GlobeFunction(this).autentikasi().signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) {
                 if (it.isSuccessful) {
-                    startActivity(Intent(this, HomeActivity::class.java))
                     finish()
+                    startActivity(Intent(this, HomeActivity::class.java))
                 } else {
                     Toast.makeText(this, "Data tidak ada", Toast.LENGTH_SHORT).show()
                 }

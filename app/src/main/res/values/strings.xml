@@ -8,7 +8,7 @@
     <string name="desc_mitra">No. Referensi Mitra</string>
     <string name="checkout">Checkout</string>
     <string name="merek_model">Merek - Model</string>
-    <string name="tarif_sewa">Tarif Sewa</string>
+    <string name="tarif_sewa">Tarif Sewa(/Hari)</string>
     <string name="lama_hari">Lama Sewa</string>
     <string name="mulai_sewa">Mulai Sewa</string>
 </resources>

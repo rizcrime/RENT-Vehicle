@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.text.Html
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -32,8 +33,8 @@ open class HomeActivity : AppCompatActivity() {
     private var firebaseFirestore: FirebaseFirestore? = null
     private var firebaseStorage : FirebaseStorage? = null
     private var fullname: String? = null
-    open var status: String = ""
-    open var header: TextView? = null
+    private var status: String = ""
+    private var header: TextView? = null
     private var toolbar: Toolbar? = null
     private var content = Html.fromHtml("<u><i>Pengunjung, silahkan klik untuk masuk/daftar & nikmati seluruh fitur</i></u>")
     private var iconProfile: ImageView? = null
@@ -47,6 +48,7 @@ open class HomeActivity : AppCompatActivity() {
         val judul = mutableListOf<String>()
         val deskripsi = mutableListOf<String>()
         val waktu = mutableListOf<String>()
+        val realWaktu = mutableListOf<String>()
 
         val rvHome : RecyclerView = findViewById(R.id.rv_home)
         val fabChat: FloatingActionButton = findViewById(R.id.fab_msg)
@@ -72,8 +74,9 @@ open class HomeActivity : AppCompatActivity() {
                             judul.add(dua.getString("judul").toString())
                             deskripsi.add(dua.getString("deskripsi").toString())
                             waktu.add(GlobeFunction(this).tanggal(dua["waktu_sewa"] as Timestamp))
+                            realWaktu.add(GlobeFunction(this).convTimestamp(dua["waktu_sewa"] as Timestamp))
                             rvHome.adapter = ItemAdapter(this, id, tarif, judul,
-                                                            deskripsi, gambar, waktu, status)
+                                                            deskripsi, gambar, waktu, realWaktu, status)
                         }
                 }
             }
@@ -97,6 +100,18 @@ open class HomeActivity : AppCompatActivity() {
         getUserData()
 
 
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        GlobeFunction(this).basisData().collection("users")
+            .document(GlobeFunction(this).autentikasi().uid.toString()).get().addOnCompleteListener {
+                val statusUser = it.result.getString("status")
+                val itemAddCar = menu?.findItem(R.id.add_car)
+                if (statusUser != "admin"){
+                    itemAddCar?.isVisible = false
+                }
+            }
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -123,6 +138,12 @@ open class HomeActivity : AppCompatActivity() {
                 }
                 return true
             }
+            R.id.add_car -> {
+                startActivity(Intent(this, DescriptionActivity::class.java).apply {
+                    putExtra("TOMBOL", "Create")
+                })
+                return true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -135,7 +156,6 @@ open class HomeActivity : AppCompatActivity() {
                     status = task.result.getString("status")!!
                     toolbar?.title = "Hallo, $fullname"
                     header?.text = "Terverifikasi $status"
-                    Toast.makeText(this, "Selamat datang kembali $fullname", Toast.LENGTH_SHORT).show()
                 }else {
                     Toast.makeText(this, "Terdeteksi, masuk sebagai pengunjung", Toast.LENGTH_SHORT).show()
                     toolbar?.title = "Hallo, Pengunjung"
@@ -147,6 +167,11 @@ open class HomeActivity : AppCompatActivity() {
             }?.addOnFailureListener {
                 Toast.makeText(this, "Jaringan Error, silahkan coba lagi!", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        recreate()
     }
 
 }

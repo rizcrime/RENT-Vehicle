@@ -21,6 +21,7 @@ class ItemAdapter(private var context: Context,
                   private var deskripsi: MutableList<String>,
                   private var gambar : MutableList<String>,
                   private var waktu: MutableList<String>,
+                  private var realWaktu: MutableList<String>,
                   private var status: String = "") :
     RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
 
@@ -42,7 +43,7 @@ class ItemAdapter(private var context: Context,
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val convertRp = GlobeFunction(context).rupiah(tarif[position].toInt())
-        viewHolder.txtHarga?.text = convertRp + "/${context.getString(R.string.hari)}"
+        viewHolder.txtHarga?.text = "$convertRp  /${context.getString(R.string.hari)}"
         viewHolder.txtJudul?.text = judul[position]
         viewHolder.txtStatus?.text = waktu[position]
         viewHolder.txtStatus?.setBackgroundColor(Color.BLACK)
@@ -57,7 +58,7 @@ class ItemAdapter(private var context: Context,
             putExtra("ID", id[position])
             putExtra("HARGA", tarif[position])
             putExtra("NAMA", judul[position])
-            putExtra("WAKTU", waktu[position] )
+            putExtra("WAKTU", realWaktu[position] )
             putExtra("DESKRIPSI", deskripsi[position] )
             putExtra("GAMBAR", gambar[position])
         }

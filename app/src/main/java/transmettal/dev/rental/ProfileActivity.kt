@@ -198,7 +198,7 @@ class ProfileActivity : AppCompatActivity() {
                                         GlobeFunction(this).reloadPage(this)
                                     }
                                 break
-                            }else{
+                            }else if(edtValidate?.text.toString() != kodeAdmin[out]){
                                 Toast.makeText(this, "Kode salah", Toast.LENGTH_LONG).show()
                                 validateLayout?.visibility = View.GONE
                             }

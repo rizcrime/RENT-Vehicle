@@ -95,9 +95,11 @@ class RegisterActivity : AppCompatActivity() {
                                 startActivity(Intent(this, LoginActivity::class.java))
                                 Toast.makeText(this, "Akun berhasil dibuat", Toast.LENGTH_SHORT).show()
                             }
+                    }.addOnCanceledListener {
+                        Toast.makeText(this, "Upload dibatalkan", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(this, "Akun gagal dibuat", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Akun gagal dibuat karena\n${task.exception}", Toast.LENGTH_SHORT).show()
                 }
             }
     }
