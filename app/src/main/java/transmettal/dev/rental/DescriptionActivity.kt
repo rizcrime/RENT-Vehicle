@@ -1,12 +1,10 @@
 package transmettal.dev.rental
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.widget.Button
@@ -19,24 +17,23 @@ import com.afollestad.materialdialogs.datetime.dateTimePicker
 import com.denzcoskun.imageslider.ImageSlider
 import com.denzcoskun.imageslider.interfaces.ItemClickListener
 import com.denzcoskun.imageslider.models.SlideModel
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.storage.FirebaseStorage
 import java.util.*
 import kotlin.collections.ArrayList
-
 
 class DescriptionActivity : AppCompatActivity() {
 
     private val PICK_IMG = 71
 
-    lateinit var btnCheckOut: Button
-    lateinit var banyakHari: EditText
-    lateinit var sisaWaktu: EditText
-    lateinit var picMobil: ImageSlider
-    lateinit var uploadCars: ImageView
+    private lateinit var btnCheckOut: Button
+    private lateinit var banyakHari: EditText
+    private lateinit var sisaWaktu: EditText
+    private lateinit var picMobil: ImageSlider
+    private lateinit var uploadCars: ImageView
+    private lateinit var edtDiskon: EditText
+    private lateinit var edtMitra: EditText
 
     private var urlArray = mutableListOf<String>()
     private var imageList = ArrayList<SlideModel>()
@@ -52,9 +49,18 @@ class DescriptionActivity : AppCompatActivity() {
     private var msgGambar: String = ""
     private var msgAdmin: String = ""
 
+    private var refKode = ArrayList<String>()
+    private var mitra = ArrayList<String>()
+
+    private var getPersen = ArrayList<String>()
+    private var getKodePromo = ArrayList<String>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_description)
+
+        diskon()
+        referenceMitra()
 
         val namaMobil:EditText = findViewById(R.id.nama_mobil)
         val deskMobil: EditText = findViewById(R.id.deskripsi_mobil)
@@ -68,6 +74,8 @@ class DescriptionActivity : AppCompatActivity() {
         btnCheckOut = findViewById(R.id.btn_checkout)
         picMobil = findViewById(R.id.pic_mobil)
         uploadCars = findViewById(R.id.upload_cars)
+        edtDiskon = findViewById(R.id.edt_discount)
+        edtMitra = findViewById(R.id.edt_mitra)
 
         msgHarga = intent.getStringExtra("HARGA").toString()
         msgGambar = intent.getStringExtra("GAMBAR").toString()
@@ -155,15 +163,15 @@ class DescriptionActivity : AppCompatActivity() {
         banyakHari.filters = arrayOf(LimitNumbers(1, 30))
         banyakHari.addTextChangedListener(textWatcher)
         btnCheckOut.setOnClickListener {
-
-            if (status != "admin" && btnCheckOut.text != "Rp0"
-                && btnCheckOut.text != "Bayar" && inputTanggal.text.toString() != ""){
+            if (status != "admin" && btnCheckOut.text != "Rp0" && btnCheckOut.text != "Bayar"
+                && inputTanggal.text.toString() != "" || seleksiDiskon() != "Tidak ada" || seleksiMitra() != "Tidak ada"){
                 startActivity(Intent(this, CheckOutActivity::class.java).apply {
                     putExtra("HARGA", btnCheckOut.text)
                     putExtra("NAMA", msgNamaMobil)
                     putExtra("JUMLAH", banyakHari.text.toString())
                     putExtra("TANGGAL", inputTanggal.text.toString())
-                    putExtra("DISKON", "0%")
+                    putExtra("DISKON", seleksiDiskon())
+                    putExtra("BROKER", seleksiMitra())
                     putExtra("GAMBAR", msgGambar)
                 })
             }else if (btnCheckOut.text == "Update"){
@@ -172,8 +180,8 @@ class DescriptionActivity : AppCompatActivity() {
                     GlobeFunction(this).fbCalendar(sisaWaktu.text.toString()))
             }else if(btnCheckOut.text == "Create"){
                 upload()
-                Log.d("ArrayCobaan", "$urlArray")
-            } else{
+            }
+            else{
                 GlobeFunction(this).vibratePhone()
                 Toast.makeText(this, "Masukan rencana sewa anda", Toast.LENGTH_SHORT).show()
             }
@@ -187,7 +195,8 @@ class DescriptionActivity : AppCompatActivity() {
             if (s?.length == 0 || s?.length == null){
                 btnCheckOut.text = "Rp0"
             }else{
-                hasilCheckOut = simpleCalc(banyakHari.text.toString().toInt(), msgHarga.toInt()).toString()
+                hasilCheckOut = simpleCalc(banyakHari.text.toString().toInt(),
+                                           msgHarga.toInt()).toString()
                 btnCheckOut.text = GlobeFunction(this@DescriptionActivity).rupiah(hasilCheckOut.toInt())
             }
         }
@@ -195,7 +204,7 @@ class DescriptionActivity : AppCompatActivity() {
     }
 
     fun getTime(edtText: EditText){
-        MaterialDialog(this).show {this
+        MaterialDialog(this).show {
             dateTimePicker(requireFutureDateTime = true) { _, dateTime ->
                 val tahun = dateTime.get(Calendar.YEAR)
                 val bulan = dateTime.get(Calendar.MONTH)
@@ -251,22 +260,67 @@ class DescriptionActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("SetTextI18n")
+    fun diskon(){
+        GlobeFunction(this).basisData().collection("diskon").get()
+            .addOnSuccessListener { dataDiskon ->
+                for (datas in dataDiskon){
+                    GlobeFunction(this).basisData().collection("diskon")
+                        .document(datas.id).get().addOnSuccessListener {
+                            getPersen.add(it.getString("diskon_persen").toString())
+                            getKodePromo.add(it.getString("kode_promo").toString())
+                        }
+                }
+            }
+    }
+
+    fun seleksiDiskon():String{
+        for (i in getKodePromo.indices) {
+            if (getKodePromo[i] == edtDiskon.text.toString()){
+                return getPersen[i]
+            }
+        }
+        Toast.makeText(this, "Tidak ada diskon", Toast.LENGTH_LONG).show()
+        return "Tidak ada"
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_IMG) {
             if (resultCode == RESULT_OK) {
                 if (data?.clipData != null) {
                     val count = data.clipData!!.itemCount
-                    var CurrentImageSelect = 0
-                    while (CurrentImageSelect < count) {
-                        val imageuri = data.clipData!!.getItemAt(CurrentImageSelect).uri
+                    var currentImageSelect = 0
+                    while (currentImageSelect < count) {
+                        val imageuri = data.clipData!!.getItemAt(currentImageSelect).uri
                         ImageList.add(imageuri)
-                        CurrentImageSelect += 1
+                        currentImageSelect += 1
                     }
                 }
             }
         }
+    }
+
+    fun referenceMitra(){
+        GlobeFunction(this).basisData().collection("users").get()
+            .addOnSuccessListener { dataRef ->
+                for (datas in dataRef){
+                    GlobeFunction(this).basisData().collection("users")
+                        .document(datas.id).get().addOnSuccessListener {
+                            refKode.add(it.getString("special_kode").toString())
+                            mitra.add(it.getString("fullname").toString())
+                        }
+                }
+            }
+    }
+
+    fun seleksiMitra():String{
+        for (i in refKode.indices) {
+            if (refKode[i] == edtMitra.text.toString()){
+                return mitra[i]
+            }
+        }
+        Toast.makeText(this, "Tidak ada mitra", Toast.LENGTH_LONG).show()
+        return "Tidak ada"
     }
 
 }

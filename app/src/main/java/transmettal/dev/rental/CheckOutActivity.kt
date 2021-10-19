@@ -17,6 +17,7 @@ class CheckOutActivity : AppCompatActivity() {
 
     private var filePath: Uri? = null
     private var imageView: ImageView? = null
+    private var diskon :Double = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,13 +44,25 @@ class CheckOutActivity : AppCompatActivity() {
         val msgBooke = intent.getStringExtra("TANGGAL")
         val msgDiskon = intent.getStringExtra("DISKON")
         val msgHarga = intent.getStringExtra("HARGA")
+        val msgBroker = intent.getStringExtra("BROKER")
 
         Picasso.get().load(msgGambar).into(imgMobil)
         txtJudul.text = msgJudul
         txtJumlah.text = msgJumlah
         tglBooking.text = msgBooke
-        txtDiskon.text = msgDiskon
-        txtHarga.text = msgHarga
+        txtDiskon.text = "$msgDiskon%"
+        txtNamaBroker.text = msgBroker
+
+        if (msgDiskon == "Tidak ada"){
+            txtJumlah.text = msgJumlah
+            txtDiskon.text = msgDiskon
+            txtHarga.text = msgHarga
+        }else{
+            diskon = msgDiskon!!.toDouble()
+            val harga = GlobeFunction(this).revertRupiah(msgHarga.toString())
+            val hargaAkhir = harga.toDouble()*diskon/100
+            txtHarga.text = GlobeFunction(this).rupiah(hargaAkhir.toInt())
+        }
 
         GlobeFunction(this).basisData().collection("info")
             .document("101").get().addOnSuccessListener {
@@ -64,7 +77,6 @@ class CheckOutActivity : AppCompatActivity() {
         GlobeFunction(this).basisData().collection("users")
             .document(FirebaseAuth.getInstance().uid.toString()).get().addOnCompleteListener {
                 txtNamaPenyewa.text = it.result.getString("fullname")
-                txtNamaBroker.text = "Tidak ada"
             }
 
         imageView?.setOnClickListener {

@@ -11,4 +11,6 @@
     <string name="tarif_sewa">Tarif Sewa(/Hari)</string>
     <string name="lama_hari">Lama Sewa</string>
     <string name="mulai_sewa">Mulai Sewa</string>
+    <string name="input_kode_diskon">Input Kode Diskon</string>
+    <string name="input_kode_mitra">Input Kode Mitra</string>
 </resources>
