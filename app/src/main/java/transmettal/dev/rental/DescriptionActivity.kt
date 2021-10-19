@@ -1,29 +1,46 @@
 package transmettal.dev.rental
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.datetime.dateTimePicker
 import com.denzcoskun.imageslider.ImageSlider
+import com.denzcoskun.imageslider.interfaces.ItemClickListener
 import com.denzcoskun.imageslider.models.SlideModel
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.storage.FirebaseStorage
 import java.util.*
 import kotlin.collections.ArrayList
 
+
 class DescriptionActivity : AppCompatActivity() {
+
+    private val PICK_IMG = 71
 
     lateinit var btnCheckOut: Button
     lateinit var banyakHari: EditText
     lateinit var sisaWaktu: EditText
+    lateinit var picMobil: ImageSlider
+    lateinit var uploadCars: ImageView
+
+    private var urlArray = mutableListOf<String>()
+    private var imageList = ArrayList<SlideModel>()
+    private var ImageList = ArrayList<Uri>()
 
     private var msgHarga: String = ""
     private var hasilCheckOut: String = ""
@@ -39,9 +56,7 @@ class DescriptionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_description)
 
-        val imageList = ArrayList<SlideModel>()
         val namaMobil:EditText = findViewById(R.id.nama_mobil)
-        val picMobil:ImageSlider = findViewById(R.id.pic_mobil)
         val deskMobil: EditText = findViewById(R.id.deskripsi_mobil)
         val hargaAsli: EditText = findViewById(R.id.harga_asli)
         val inputTanggal : EditText = findViewById(R.id.tglMulai)
@@ -51,6 +66,8 @@ class DescriptionActivity : AppCompatActivity() {
         sisaWaktu = findViewById(R.id.sisa_Waktu)
         banyakHari = findViewById(R.id.jml_input)
         btnCheckOut = findViewById(R.id.btn_checkout)
+        picMobil = findViewById(R.id.pic_mobil)
+        uploadCars = findViewById(R.id.upload_cars)
 
         msgHarga = intent.getStringExtra("HARGA").toString()
         msgGambar = intent.getStringExtra("GAMBAR").toString()
@@ -68,6 +85,13 @@ class DescriptionActivity : AppCompatActivity() {
             }
         }
 
+        picMobil.setItemClickListener(object : ItemClickListener {
+            override fun onItemSelected(position: Int) {
+                Toast.makeText(this@DescriptionActivity, "gambar", Toast.LENGTH_SHORT).show()
+                GlobeFunction(this@DescriptionActivity).chooseImage(this@DescriptionActivity)
+            }
+        })
+
         GlobeFunction(this).basisData().collection("users")
             .document(FirebaseAuth.getInstance().uid.toString())
             .get().addOnCompleteListener {
@@ -78,14 +102,26 @@ class DescriptionActivity : AppCompatActivity() {
                     hargaAsli.isFocusableInTouchMode = true
                     parentInputTanggal.visibility = View.GONE
                     parentBanyakHari.visibility = View.GONE
+                    sisaWaktu.setOnClickListener {
+                        getTime(sisaWaktu)
+                    }
                     btnCheckOut.text = "Update"
-                }else{
+                }else if (status == "admin" && msgAdmin == "Create"){
                     namaMobil.isFocusableInTouchMode = true
                     deskMobil.isFocusableInTouchMode = true
                     hargaAsli.isFocusableInTouchMode = true
+                    uploadCars.visibility = View.VISIBLE
+                    picMobil.visibility = View.GONE
                     parentInputTanggal.visibility = View.GONE
                     parentBanyakHari.visibility = View.GONE
                     btnCheckOut.text = msgAdmin
+                    sisaWaktu.setOnClickListener {
+                        getTime(sisaWaktu)
+                    }
+                    uploadCars.setOnClickListener {
+                        Toast.makeText(this, "Masukan gambar kendaraan", Toast.LENGTH_SHORT).show()
+                        GlobeFunction(this).chooseImage(this)
+                    }
                 }
         }
 
@@ -112,22 +148,8 @@ class DescriptionActivity : AppCompatActivity() {
         actionbar?.setDisplayHomeAsUpEnabled(true)
 
 
-//        inputTanggal.setOnClickListener {
-//            GlobeFunction(this).datePicker(inputTanggal)
-//        }
-//
-        sisaWaktu.setOnClickListener {
-            MaterialDialog(this).show {this
-                dateTimePicker(requireFutureDateTime = true) { _, dateTime ->
-                    val tahun = dateTime.get(Calendar.YEAR)
-                    val bulan = dateTime.get(Calendar.MONTH)
-                    val hari = dateTime.get(Calendar.DAY_OF_MONTH)
-                    val jam = dateTime.get(Calendar.HOUR_OF_DAY)
-                    val menit = dateTime.get(Calendar.MINUTE)
-                    val detik = dateTime.get(Calendar.SECOND)
-                    sisaWaktu.setText("$tahun-$bulan-${hari}T$jam:$menit:${detik}Z")
-                }
-            }
+        inputTanggal.setOnClickListener {
+            getTime(inputTanggal)
         }
 
         banyakHari.filters = arrayOf(LimitNumbers(1, 30))
@@ -149,7 +171,8 @@ class DescriptionActivity : AppCompatActivity() {
                     GlobeFunction(this).revertRupiah(hargaAsli.text.toString()),
                     GlobeFunction(this).fbCalendar(sisaWaktu.text.toString()))
             }else if(btnCheckOut.text == "Create"){
-
+                upload()
+                Log.d("ArrayCobaan", "$urlArray")
             } else{
                 GlobeFunction(this).vibratePhone()
                 Toast.makeText(this, "Masukan rencana sewa anda", Toast.LENGTH_SHORT).show()
@@ -169,6 +192,20 @@ class DescriptionActivity : AppCompatActivity() {
             }
         }
         override fun afterTextChanged(s: Editable?) {}
+    }
+
+    fun getTime(edtText: EditText){
+        MaterialDialog(this).show {this
+            dateTimePicker(requireFutureDateTime = true) { _, dateTime ->
+                val tahun = dateTime.get(Calendar.YEAR)
+                val bulan = dateTime.get(Calendar.MONTH)
+                val hari = dateTime.get(Calendar.DAY_OF_MONTH)
+                val jam = dateTime.get(Calendar.HOUR_OF_DAY)
+                val menit = dateTime.get(Calendar.MINUTE)
+                val detik = dateTime.get(Calendar.SECOND)
+                edtText.setText("$tahun-$bulan-${hari}T$jam:$menit:${detik}Z")
+            }
+        }
     }
 
     fun simpleCalc(vararg a:Int):Int{
@@ -193,6 +230,43 @@ class DescriptionActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "$e", Toast.LENGTH_LONG).show() }
+    }
+
+    fun upload() {
+        val imageFolder = FirebaseStorage.getInstance().reference.child("Kendaraan")
+        for (uploads in ImageList.indices) {
+            val namaFile = GlobeFunction(this).getRandomString(12)
+            val imagename = imageFolder.child("image/$namaFile")
+            imagename.putFile(ImageList[uploads]).addOnCompleteListener {
+                ImageList.clear()
+                urlArray.add(imagename.toString())
+                GlobeFunction(this).penyimpanan().reference.child("Kendaraan/$imagename/")
+                    .downloadUrl.addOnSuccessListener { uri ->
+                        GlobeFunction(this).basisData().collection("kendaraan").document()
+                            .set(mapOf("list_foto" to arrayListOf(uri.toString()))).addOnCompleteListener {
+                                Toast.makeText(this, "Berhasil upload", Toast.LENGTH_SHORT).show()
+                            }
+                    }
+            }
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_IMG) {
+            if (resultCode == RESULT_OK) {
+                if (data?.clipData != null) {
+                    val count = data.clipData!!.itemCount
+                    var CurrentImageSelect = 0
+                    while (CurrentImageSelect < count) {
+                        val imageuri = data.clipData!!.getItemAt(CurrentImageSelect).uri
+                        ImageList.add(imageuri)
+                        CurrentImageSelect += 1
+                    }
+                }
+            }
+        }
     }
 
 }
