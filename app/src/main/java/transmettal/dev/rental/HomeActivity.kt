@@ -107,8 +107,10 @@ open class HomeActivity : AppCompatActivity() {
             .document(GlobeFunction(this).autentikasi().uid.toString()).get().addOnCompleteListener {
                 val statusUser = it.result.getString("status")
                 val itemAddCar = menu?.findItem(R.id.add_car)
+                val itemAddDisc = menu?.findItem(R.id.add_dicount)
                 if (statusUser != "admin"){
                     itemAddCar?.isVisible = false
+                    itemAddDisc?.isVisible = false
                 }
             }
         return super.onPrepareOptionsMenu(menu)

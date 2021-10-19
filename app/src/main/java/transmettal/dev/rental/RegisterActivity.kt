@@ -99,7 +99,7 @@ class RegisterActivity : AppCompatActivity() {
                         Toast.makeText(this, "Upload dibatalkan", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(this, "Akun gagal dibuat karena\n${task.exception}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Pastikan foto profile diisi & internet berjalan", Toast.LENGTH_LONG).show()
                 }
             }
     }

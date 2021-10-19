@@ -25,12 +25,18 @@
                 android:layout_marginVertical="3dp"
                 app:iss_auto_cycle="true"
                 app:iss_delay="0"
-                app:iss_placeholder="@android:color/darker_gray"
-                app:iss_error_image="@android:color/darker_gray"
+                app:iss_placeholder="@drawable/placeholder"
+                app:iss_error_image="@drawable/error"
                 app:iss_corner_radius="5"
                 app:iss_selected_dot="@drawable/default_selected_dot"
                 app:iss_unselected_dot="@drawable/default_unselected_dot"
                 app:iss_period="3000" />
+            <ImageButton
+                android:id="@+id/upload_cars"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:background="@drawable/ic_upload"
+                android:visibility="gone"/>
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">

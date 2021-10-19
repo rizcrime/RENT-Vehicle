@@ -117,6 +117,7 @@ open class GlobeFunction(var context: Context) {
         val intent = Intent()
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
         activity.startActivityForResult(Intent.createChooser(intent, "Select Picture"), pickImageRequest)
     }
 

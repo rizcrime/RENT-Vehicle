@@ -14,4 +14,7 @@
     <item
         android:id="@+id/add_car"
         android:title="Tambah Mobil"/>
+    <item
+        android:id="@+id/add_dicount"
+        android:title="Tambah Diskon"/>
 </menu>
